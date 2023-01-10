@@ -1,4 +1,4 @@
-I thought this was an interesting take home challenge that I found on Github.  I thought I would give it shot.
+I thought this was an interesting take home challenge that I found on Github.  I thought I would give it a shot.
 
 ---------------------------------------------------
 
