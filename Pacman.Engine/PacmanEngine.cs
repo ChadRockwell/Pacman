@@ -2,14 +2,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public sealed class PacmanEngine
 {
+    private readonly int _columns;
     private readonly string _commands;
     private readonly Point _initialPosition;
-    private readonly HashSet<Point> _allWalls;
     private readonly bool _invalidInitialPosition;
+    private readonly int _rows;
+    private readonly HashSet<Point> _walls;
 
     public PacmanEngine(
         int columns,
@@ -20,11 +21,10 @@ public sealed class PacmanEngine
     {
         _commands = commands;
         _initialPosition = initialPosition;
-
         _invalidInitialPosition = initialPosition.X > columns || initialPosition.Y > rows;
-
-        // calculate the walls
-        _allWalls = CalculateAllWalls(columns, rows, walls);
+        _columns = columns;
+        _rows = rows;
+        _walls = walls;
     }
 
     public (Point FinalPosition, int CountOfCoins) Execute()
@@ -51,7 +51,7 @@ public sealed class PacmanEngine
             };
 
             // check if wall
-            if (!_allWalls.Contains(next))
+            if (!IsWall(next))
             {
                 // initial position doesn't have a coin
                 if (next != _initialPosition)
@@ -64,15 +64,11 @@ public sealed class PacmanEngine
         return (current, coins.Count);
     }
 
-    private static HashSet<Point> CalculateAllWalls(int columns, int rows, HashSet<Point> walls)
+    private bool IsWall(Point current)
     {
-        // find edges
-        var left = Enumerable.Range(0, rows).Select(s => new Point(-1, s));
-        var right = Enumerable.Range(0, rows).Select(s => new Point(columns, s));
-        var top = Enumerable.Range(0, columns).Select(s => new Point(s, rows));
-        var bottom = Enumerable.Range(0, columns).Select(s => new Point(s, -1));
+        int x = current.X;
+        int y = current.Y;
 
-        // get all walls
-        return walls.Union(left).Union(right).Union(top).Union(bottom).ToHashSet();
+        return x < 0 || y < 0 || x >= _columns || y >= _rows || _walls.Contains(current);
     }
 }
